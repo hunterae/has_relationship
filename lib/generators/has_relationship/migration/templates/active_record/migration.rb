@@ -12,7 +12,9 @@ class HasRelationshipMigration < ActiveRecord::Migration
       t.column :created_at, :datetime
     end
     
-    add_index :taggings, [:relation1_id, :relation1_type, :relation2_id, :relation2_type, :relationship]
+    add_index :relationships, [:relation1_id, :relation1_type]
+    add_index :relationships, [:relation2_id, :relation2_type]
+    add_index :relationships, [:relationship]
   end
   
   def self.down
