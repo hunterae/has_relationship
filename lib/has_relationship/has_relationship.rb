@@ -26,8 +26,10 @@ module HasRelationship
         end
     
         relationship = options[:relationship] if options[:relationship] 
-        relationship = [relationship] unless relationship.kind_of?(Array)
-        relationship_through = options[:singular] ? "relationship_through_#{relationship.join("_").to_s.tableize.singularize}".to_sym : "relationship_through_#{relationship.join("_").to_s.tableize}".to_sym
+        
+        relationships = relationship.kind_of?(Array) ? relationship : [relationship]
+        
+        relationship_through = options[:singular] ? "relationship_through_#{relationships.join("_").to_s.tableize.singularize}".to_sym : "relationship_through_#{relationships.join("_").to_s.tableize}".to_sym
 
         HasRelationship::Relationship.class_eval do
           belongs_to "relation2_#{class_name.downcase}".to_sym,  :class_name => class_name, :foreign_key => "relation2_id"
@@ -40,10 +42,10 @@ module HasRelationship
         class_eval do
           if options[:singular]
             has_one relationship_through, :as => :relation1, :dependent => :destroy, :class_name => "HasRelationship::Relationship", :conditions => {:relationship => relationship}
-            has_one resource_name, :through => relationship_through, :class_name => class_name, :source => "relation2_#{class_name.downcase}".to_s, :conditions => ["relationships.relation2_type = ? and relationships.relationship in (?)", class_name, relationship], :select => options[:select]
+            has_one resource_name, :through => relationship_through, :class_name => class_name, :source => "relation2_#{class_name.downcase}".to_s, :conditions => ["relationships.relation2_type = ? and relationships.relationship in (?)", class_name, relationships], :select => options[:select]
           else
             has_many relationship_through, :as => :relation1, :dependent => :destroy, :class_name => "HasRelationship::Relationship", :conditions => {:relationship => relationship}
-            has_many resource_name, :through => relationship_through, :class_name => class_name, :source => "relation2_#{class_name.downcase}".to_sym, :conditions => ["relationships.relation2_type = ? and relationships.relationship in (?)", class_name, relationship], :select => options[:select]
+            has_many resource_name, :through => relationship_through, :class_name => class_name, :source => "relation2_#{class_name.downcase}".to_sym, :conditions => ["relationships.relation2_type = ? and relationships.relationship in (?)", class_name, relationships], :select => options[:select]
           end
         end
       end
@@ -74,9 +76,10 @@ module HasRelationship
         end
     
         relationship = options[:relationship] if options[:relationship] 
-        relationship = [relationship] unless relationship.kind_of?(Array)
         
-        relationship_through = options[:singular] ? "inverse_relationship_through_#{relationship.join("_").to_s.tableize.singularize}".to_sym : "inverse_relationship_through_#{relationship.join("_").to_s.tableize}".to_sym
+        relationships = relationship.kind_of?(Array) ? relationship : [relationship]
+        
+        relationship_through = options[:singular] ? "inverse_relationship_through_#{relationships.join("_").to_s.tableize.singularize}".to_sym : "inverse_relationship_through_#{relationships.join("_").to_s.tableize}".to_sym
 
         HasRelationship::Relationship.class_eval do
           belongs_to "relation1_#{class_name.downcase}".to_sym,  :class_name => class_name, :foreign_key => "relation1_id"
@@ -89,10 +92,10 @@ module HasRelationship
         class_eval do
           if options[:singular]
             has_one relationship_through, :as => :relation2, :dependent => :destroy, :class_name => "HasRelationship::Relationship", :conditions => {:relationship => relationship}
-            has_one resource_name, :through => relationship_through, :class_name => class_name, :source => "relation1_#{class_name.downcase}".to_sym, :conditions => ["relationships.relation1_type = ? and relationships.relationship in (?)", class_name, relationship], :select => options[:select]
+            has_one resource_name, :through => relationship_through, :class_name => class_name, :source => "relation1_#{class_name.downcase}".to_sym, :conditions => ["relationships.relation1_type = ? and relationships.relationship in (?)", class_name, relationships], :select => options[:select]
           else
             has_many relationship_through, :as => :relation2, :dependent => :destroy, :class_name => "HasRelationship::Relationship", :conditions => {:relationship => relationship}
-            has_many resource_name, :through => relationship_through, :class_name => class_name, :source => "relation1_#{class_name.downcase}".to_sym, :conditions => ["relationships.relation1_type = ? and relationships.relationship in (?)", class_name, relationship], :select => options[:select]
+            has_many resource_name, :through => relationship_through, :class_name => class_name, :source => "relation1_#{class_name.downcase}".to_sym, :conditions => ["relationships.relation1_type = ? and relationships.relationship in (?)", class_name, relationships], :select => options[:select]
           end
         end
       end
