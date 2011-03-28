@@ -123,7 +123,7 @@ Add the following to your Gemfile:
     @story.task = Task.new
     @story.save
 
-Copyright (c) 2007-2010 Andrew Hunter (http://captico.com/) and Captico LLC. (http://captico.com/), released under the MIT license
+Copyright (c) 2011 Andrew Hunter (http://github.com/hunterae) and Captico LLC. (http://captico.com/), released under the MIT license
 
 == Special Thanks
 
