@@ -124,3 +124,8 @@ Add the following to your Gemfile:
     @story.save
 
 Copyright (c) 2007-2010 Andrew Hunter (http://captico.com/) and Captico LLC. (http://captico.com/), released under the MIT license
+
+== Special Thanks
+
+HasRelationship was aided by some of the insight provided in the article http://blog.hasmanythrough.com/2006/4/3/polymorphic-through written by Josh Susser. Also many thanks to the ActsAsTaggableOn team[https://github.com/mbleigh/acts-as-taggable-on], as I have used your gem as a jumping point for writing my own, given the similar nature of the task at hand.
+
