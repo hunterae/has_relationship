@@ -1,0 +1,126 @@
+= HasRelationship
+
+This gem was based on insight provided by the article http://blog.hasmanythrough.com/2006/4/3/polymorphic-through.
+It was developed because of a lack of solutions to be able to handle double polymorphism in rails. In other words,
+there was no way to create an xref table (the middle table in a many-to-many relationship) that joined two unknown
+tables together. There are obvious reasons for these limitations in rails, but nevertheless, a solution was needed.
+
+HasRelationship hopefully is that solution. The user runs a migration that generates the "relationships" table. That
+table is then used to join any two tables together and create a relationship between them. So now, when you want to 
+add a relationship between class 1 and class 2, you won't have to generate your own custom intermediate xref table
+each time; the "relationships" table can be reused for each of your custom relationships.
+
+== Installation
+
+=== Rails 3.0
+
+Add the following to your Gemfile:
+  
+  gem 'has-relationship'
+
+==== Post Installation
+
+1. rails generate has_relationship:migration
+2. rake db:migrate
+
+== Usage
+
+    class User < ActiveRecord::Base
+      # Create a has-one-through relationship with the "tasks" table (Task class) through the "relationships" table
+      has_relationship :task
+      
+      # Alternate approach to create a has-one-through relationship with the "tasks" table (Task class) through the "relationships" table
+      has_relationship "task"
+      
+      # Alternate approach to create a has-one-through relationship with the "tasks" table (Task class) through the "relationships" table
+      has_relationship Task
+      
+      # Alternate approach to create a has-one-through relationship with the "tasks" table (Task class) through the "relationships" table
+      has_relationship :tasks, :singular => true
+      
+      
+      
+      # Create a has-many-through relationship with the "tasks" table (Task class) through the "relationships" table
+      has_relationship :tasks
+      
+      # Create a has-many-through relationship called "other_tasks" with the "tasks" table (Task class) through the "relationships" table.
+      # Please note the addition of the :relationship attribute. This is optional but highly recommended, particularly when you're going
+      # to be declaring a "has_inverse_relationship" on the Task class, as shown below. This parameter sets the "relationship" field in
+      # the relationship table.
+      # If :relationship had not been set here, it still would have defaulted to "User_OtherTask"; the benefit however of manually declaring this
+      # is that it clear exactly what to name the relationship in your use of "has_inverse_relationship".
+      has_relationship :other_tasks, :class_name => "Task", :relationship => "User_OtherTask"
+      
+      # Alternate approach to create a has-many-through relationship called "other_tasks" with the "tasks" table (Task class) through the "relationships" table
+      has_relationship :tasks, :as => :other_tasks, :relationship => "User_OtherTask"
+    end
+    
+    class Task < ActiveRecord::Base
+      # Create a has-one-through relationship with the "users" table (User class) through the "relationships" table
+      has_inverse_relationship :user
+    
+      # Alternate approach to create a has-one-through relationship with the "users" table (User class) through the "relationships" table
+      has_inverse_relationship "user"
+    
+      # Alternate approach to create a has-one-through relationship with the "users" table (User class) through the "relationships" table
+      has_inverse_relationship User
+    
+      # Alternate approach to create a has-one-through relationship with the "user" table (User class) through the "relationships" table
+      has_inverse_relationship :users, :singular => true
+    
+    
+    
+      # Create a has-many-through relationship with the "users" table (User class) through the "relationships" table
+      has_inverse_relationship :users
+    
+      # Create a has-many-through relationship called "other_users" with the "users" table (User class) through the "relationships" table
+      # Please note that here we specify the exact same :relationship as was used in the User class in its call to "has_relationship".
+      has_inverse_relationship :other_users, :class_name => "User", :relationship => "User_OtherTask"
+    
+      # Alternate approach to create a has-many-through relationship called "other_users" with the "users" table (User class) through the "relationships" table
+      has_inverse_relationship :users, :as => :other_users, :relationship => "User_OtherTask"
+      
+      
+      
+      # Create a has-one-through relationship with the "assignments" table (Assignment class) through the "relationships" table
+      has_inverse_relationship :assignment
+      
+      # Create a has-many-through relationship with the "stories" table (Story Class) through the "relationships" table
+      has_relationship :stories
+    end
+    
+    class Assignment < ActiveRecord::Base
+      # Create a has-many-through relationship with the "tasks" table (Task class) through the "relationships" table,
+      #  and create another has-many-through relationship with the "stories" table (Story class) through the "relationships" table
+      has_relationship [:tasks, :stories]
+      
+      # Create a has-many-through relationship called "other_tasks" with the "tasks" table (Task class) through the "relationships" table
+      has_relationship :tasks, :as => :other_tasks
+    end
+    
+    class Story < ActiveRecord::Base
+      # Create a has-one-through relationship called "parent" with the "tasks" table (Task class) through the "relationships" table.
+      has_inverse_relationship :tasks, :as => :parent, :relationship => "Task_Story"
+      
+      # Create a has-one-through relationship with the "tasks" table (Task class) through the "relationships" table.
+      has_inverse_relationship :task
+    end
+
+    @user = User.new(:name => "Bobby")
+    @user.task = Task.new
+    @user.tasks.build
+    @user.other_tasks << Task.new
+    @user.save
+
+    @assignment = Assignment.new
+    @assignment.tasks << Task.create
+    @assignment.stories.build
+    @assignment.other_tasks << Task.new
+    @assignment.save
+    
+    @story = Story.new
+    @story.parent = Task.create
+    @story.task = Task.new
+    @story.save
+
+Copyright (c) 2007-2010 Andrew Hunter (http://captico.com/) and Captico LLC. (http://captico.com/), released under the MIT license

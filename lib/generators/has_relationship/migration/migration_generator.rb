@@ -4,7 +4,7 @@ module HasRelationship
   class MigrationGenerator < Rails::Generators::Base
     include Rails::Generators::Migration
 
-    desc "Generates migration for Tag and Tagging models"
+    desc "Generates migration for Relationship models"
 
     def self.orm
       Rails::Generators.options[:rails][:orm]
