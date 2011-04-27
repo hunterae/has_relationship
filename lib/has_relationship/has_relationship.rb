@@ -45,7 +45,7 @@ module HasRelationship
             has_one resource_name, :through => relationship_through, :class_name => class_name, :source => "relation2_#{class_name.downcase}".to_s, :conditions => ["relationships.relation2_type = ? and relationships.relationship in (?)", class_name, relationships], :select => options[:select]
           else
             has_many relationship_through, :as => :relation1, :dependent => :destroy, :class_name => "HasRelationship::Relationship", :conditions => {:relationship => relationship}
-            has_many resource_name, :through => relationship_through, :class_name => class_name, :source => "relation2_#{class_name.downcase}".to_sym, :conditions => ["relationships.relation2_type = ? and relationships.relationship in (?)", class_name, relationships], :select => options[:select]
+            has_many resource_name, :through => relationship_through, :readonly => false, :class_name => class_name, :source => "relation2_#{class_name.downcase}".to_sym, :conditions => ["relationships.relation2_type = ? and relationships.relationship in (?)", class_name, relationships], :select => options[:select]
           end
         end
       end
@@ -95,7 +95,7 @@ module HasRelationship
             has_one resource_name, :through => relationship_through, :class_name => class_name, :source => "relation1_#{class_name.downcase}".to_sym, :conditions => ["relationships.relation1_type = ? and relationships.relationship in (?)", class_name, relationships], :select => options[:select]
           else
             has_many relationship_through, :as => :relation2, :dependent => :destroy, :class_name => "HasRelationship::Relationship", :conditions => {:relationship => relationship}
-            has_many resource_name, :through => relationship_through, :class_name => class_name, :source => "relation1_#{class_name.downcase}".to_sym, :conditions => ["relationships.relation1_type = ? and relationships.relationship in (?)", class_name, relationships], :select => options[:select]
+            has_many resource_name, :through => relationship_through, :readonly => false, :class_name => class_name, :source => "relation1_#{class_name.downcase}".to_sym, :conditions => ["relationships.relation1_type = ? and relationships.relationship in (?)", class_name, relationships], :select => options[:select]
           end
         end
       end
