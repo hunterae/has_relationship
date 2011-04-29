@@ -31,12 +31,6 @@ module HasRelationship
         relationships = relationship.kind_of?(Array) ? relationship : [relationship]
         
         relationship_through = options[:singular] ? "relationship_through_#{relationships.join("_").to_s.tableize.singularize}".to_sym : "relationship_through_#{relationships.join("_").to_s.tableize}".to_sym
-
-        HasRelationship::Relationship.class_eval do
-          before_validation do
-            self.relation2 = self.send("relation2_#{class_name.downcase}") unless self.relation2.present? or self.send("relation2_#{class_name.downcase}").nil?
-          end
-        end
       
         class_eval do
           through_conditions = (relationship.kind_of?(Array) ? nil : {:relationship => relationship})
@@ -88,12 +82,6 @@ module HasRelationship
         relationships = relationship.kind_of?(Array) ? relationship : [relationship]
         
         relationship_through = options[:singular] ? "inverse_relationship_through_#{relationships.join("_").to_s.tableize.singularize}".to_sym : "inverse_relationship_through_#{relationships.join("_").to_s.tableize}".to_sym
-
-        HasRelationship::Relationship.class_eval do
-          before_validation do
-            self.relation1 = self.send("relation1_#{class_name.downcase}") unless self.relation1.present? or self.send("relation1_#{class_name.downcase}").nil?
-          end
-        end
       
         class_eval do
           through_conditions = (relationship.kind_of?(Array) ? nil : {:relationship => relationship})
