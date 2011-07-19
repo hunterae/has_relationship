@@ -30,7 +30,7 @@ module HasRelationship
         
         relationships = relationship.kind_of?(Array) ? relationship : [relationship]
         
-        relationship_through = options[:singular] ? "relationship_through_#{relationships.join("_").to_s.tableize.singularize}".to_sym : "relationship_through_#{relationships.join("_").to_s.tableize}".to_sym
+        relationship_through = options[:singular] ? ("#{self.to_s}_#{resource_name}").to_s.tableize.singularize.to_sym : ("#{self.to_s}_#{resource_name}").to_s.tableize.to_sym
       
         class_eval do
           through_conditions = (relationship.kind_of?(Array) ? nil : {:relationship => relationship})
@@ -81,7 +81,7 @@ module HasRelationship
         
         relationships = relationship.kind_of?(Array) ? relationship : [relationship]
         
-        relationship_through = options[:singular] ? "inverse_relationship_through_#{relationships.join("_").to_s.tableize.singularize}".to_sym : "inverse_relationship_through_#{relationships.join("_").to_s.tableize}".to_sym
+        relationship_through = options[:singular] ? ("#{self.to_s}_#{resource_name}").to_s.tableize.singularize.to_sym : ("#{self.to_s}_#{resource_name}").to_s.tableize.to_sym
       
         class_eval do
           through_conditions = (relationship.kind_of?(Array) ? nil : {:relationship => relationship})
